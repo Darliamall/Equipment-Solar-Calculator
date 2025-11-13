@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>太阳能电池技术配置计算器</title>
+    <style>
+        :root {
+            --primary-color: #2c7873;
+            --secondary-color: #6fb98f;
+            --accent-color: #ffbe33;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            margin-right: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .result-section {
+            flex: 2;
+            min-width: 300px;
+            padding: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(44, 120, 115, 0.2);
+        }
+        
+        .info-text {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .result-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .result-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .result-card h3 i {
+            margin-right: 10px;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .result-label {
+            font-weight: 600;
+        }
+        
+        .result-value {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .highlight {
+            background-color: rgba(111, 185, 143, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .recommendation {
+            background-color: rgba(255, 190, 51, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .recommendation h3 {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+        
+        .panel-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .panel-table th, .panel-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .panel-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .panel-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .panel-table tr:hover {
+            background-color: rgba(44, 120, 115, 0.05);
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background-color: #235f5a;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .input-section {
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>太阳能电池技术配置计算器</h1>
+            <p class="subtitle">根据您的设备需求计算太阳能系统配置并推荐光伏板规格</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <h2>系统参数设置</h2>
+                
+                <div class="form-group">
+                    <label for="dayPower">白天所有设备功率 (W)</label>
+                    <input type="number" id="dayPower" value="38" min="0">
+                    <div class="info-text">所有需电设备白天功率</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nightPower">晚上所有设备功率 (W)</label>
+                    <input type="number" id="nightPower" value="38" min="0">
+                    <div class="info-text">所有需电设备晚上功率</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dayHours">白天工作时长 (h)</label>
+                    <input type="number" id="dayHours" value="12" min="0" step="0.5">
+                    <div class="info-text">白天工作时间</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nightHours">晚上工作时长 (h)</label>
+                    <input type="number" id="nightHours" value="12" min="0" step="0.5">
+                    <div class="info-text">夜间工作时间</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="rainyHours">阴雨天连续工作时长 (h)</label>
+                    <input type="number" id="rainyHours" value="24" min="0" step="0.5">
+                    <div class="info-text">无日照情况——夜间+阴雨天</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="voltage">工作电压 (V)</label>
+                    <input type="number" id="voltage" value="12" min="0" step="0.1">
+                    <div class="info-text">工作电压/蓄电池电压</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="irradiation">日射量 (kWh/m²)</label>
+                    <input type="number" id="irradiation" value="4.45" min="0" step="0.01">
+                    <div class="info-text">查表数据，暂定取年平均值</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="efficiency">充电效率</label>
+                    <input type="number" id="efficiency" value="0.18" min="0" max="1" step="0.01">
+                    <div class="info-text">光伏板效率</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lossFactor">损耗系数</label>
+                    <input type="number" id="lossFactor" value="0.3" min="0" max="1" step="0.01">
+                    <div class="info-text">默认损耗系数为0.3，即太阳能板的有效功率为0.7</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="minBatteryPercent">最低电量百分比</label>
+                    <input type="number" id="minBatteryPercent" value="0.15" min="0" max="1" step="0.01">
+                    <div class="info-text">蓄电池最低电量</div>
+                </div>
+                
+                <button class="btn" id="calculateBtn">计算配置</button>
+            </div>
+            
+            <div class="result-section">
+                <div class="result-card">
+                    <h3>能耗计算结果</h3>
+                    
+                    <div class="result-item">
+                        <span class="result-label">白天功耗 (Wh)</span>
+                        <span class="result-value" id="dayConsumption">456</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">夜间功耗 (Wh)</span>
+                        <span class="result-value" id="nightConsumption">456</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">每日总功耗 (Wh)</span>
+                        <span class="result-value" id="totalConsumption">957.6</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">每日所需电池容量 (AH)</span>
+                        <span class="result-value" id="dailyBattery">79.8</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">系统所需电池容量 (AH)</span>
+                        <span class="result-value" id="systemBattery">93.88</span>
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <h3>光伏板需求</h3>
+                    
+                    <div class="result-item">
+                        <span class="result-label">最小硅片面积 (m²) - 当日发电当日使用</span>
+                        <span class="result-value" id="minAreaDaily">1.708</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">最小硅片面积 (m²) - 连续发电连续使用</span>
+                        <span class="result-value" id="minAreaContinuous">2.277</span>
+                    </div>
+                    
+                    <div class="highlight">
+                        <strong>推荐依据：</strong> 使用连续发电连续使用的最小硅片面积作为推荐标准，确保系统在连续阴雨天也能正常工作。
+                    </div>
+                </div>
+                
+                <div class="recommendation">
+                    <h3>推荐光伏板规格</h3>
+                    <p>根据您的系统需求，以下光伏板规格符合要求：</p>
+                    
+                    <table class="panel-table">
+                        <thead>
+                            <tr>
+                                <th>光伏板规格</th>
+                                <th>峰值功率</th>
+                                <th>硅片面积 (m²)</th>
+                                <th>电池片数量</th>
+                                <th>产品尺寸 (mm)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recommendedPanels">
+                            <!-- 推荐的光伏板将在这里显示 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 光伏板数据
+        const panelData = [
+            { spec: "50W", power: 50, area: 0.219, cells: 36, size: "540×510×18" },
+            { spec: "70W", power: 70, area: 0.292, cells: 36, size: "671×540×18" },
+            { spec: "100W", power: 100, area: 0.438, cells: 36, size: "770×671×25" },
+            { spec: "100W", power: 100, area: 0.438, cells: 36, size: "1025×541×30" },
+            { spec: "120W", power: 120, area: 0.530, cells: 32, size: "800×760×30" },
+            { spec: "160W", power: 160, area: 0.706, cells: 32, size: "1040×760×30" },
+            { spec: "240W", power: 240, area: 1.060, cells: 64, size: "1535×760×30" },
+            { spec: "300W", power: 300, area: 1.324, cells: 60, size: "1290×1134×30" },
+            { spec: "350W", power: 350, area: 1.545, cells: 70, size: "1780×960×35" },
+            { spec: "400W", power: 400, area: 1.653, cells: 120, size: "1755×1038×35" },
+            { spec: "450W", power: 450, area: 1.984, cells: 144, size: "2094×1038×35" },
+            { spec: "550W", power: 550, area: 2.384, cells: 144, size: "2279×1134×35" }
+        ];
+
+        // 计算函数
+        function calculateSystem() {
+            // 获取输入值
+            const dayPower = parseFloat(document.getElementById('dayPower').value) || 0;
+            const nightPower = parseFloat(document.getElementById('nightPower').value) || 0;
+            const dayHours = parseFloat(document.getElementById('dayHours').value) || 0;
+            const nightHours = parseFloat(document.getElementById('nightHours').value) || 0;
+            const rainyHours = parseFloat(document.getElementById('rainyHours').value) || 0;
+            const voltage = parseFloat(document.getElementById('voltage').value) || 0;
+            const irradiation = parseFloat(document.getElementById('irradiation').value) || 0;
+            const efficiency = parseFloat(document.getElementById('efficiency').value) || 0;
+            const lossFactor = parseFloat(document.getElementById('lossFactor').value) || 0;
+            const minBatteryPercent = parseFloat(document.getElementById('minBatteryPercent').value) || 0;
+
+            // 计算能耗
+            const dayConsumption = dayPower * dayHours;
+            const nightConsumption = nightPower * nightHours;
+            const totalConsumption = (dayConsumption + nightConsumption) * 1.05; // 包含5%损耗
+            
+            // 计算电池容量
+            const dailyBattery = totalConsumption / voltage;
+            const systemBattery = dailyBattery * rainyHours / (dayHours + nightHours) / (1 - minBatteryPercent);
+            
+            // 计算最小硅片面积
+            const minAreaDaily = (totalConsumption / 1000) / irradiation / efficiency / (1 - lossFactor);
+            const minAreaContinuous = (totalConsumption + totalConsumption * rainyHours / (dayHours + nightHours) / 3) / 1000 / irradiation / efficiency / (1 - lossFactor);
+
+            // 更新结果显示
+            document.getElementById('dayConsumption').textContent = dayConsumption.toFixed(2);
+            document.getElementById('nightConsumption').textContent = nightConsumption.toFixed(2);
+            document.getElementById('totalConsumption').textContent = totalConsumption.toFixed(2);
+            document.getElementById('dailyBattery').textContent = dailyBattery.toFixed(2);
+            document.getElementById('systemBattery').textContent = systemBattery.toFixed(2);
+            document.getElementById('minAreaDaily').textContent = minAreaDaily.toFixed(3);
+            document.getElementById('minAreaContinuous').textContent = minAreaContinuous.toFixed(3);
+
+            // 推荐光伏板
+            recommendPanels(minAreaContinuous);
+        }
+
+        // 推荐光伏板函数
+        function recommendPanels(minArea) {
+            const recommendedPanels = panelData.filter(panel => panel.area >= minArea);
+            const tableBody = document.getElementById('recommendedPanels');
+            
+            if (recommendedPanels.length === 0) {
+                // 如果没有单个光伏板满足要求，推荐面积最大的光伏板并计算所需数量
+                const maxAreaPanel = panelData.reduce((max, panel) => panel.area > max.area ? panel : max, panelData[0]);
+                const requiredPanels = Math.ceil(minArea / maxAreaPanel.area);
+                
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--danger-color);">
+                            没有单个光伏板满足您的面积需求 (${minArea.toFixed(3)} m²)。<br>
+                            建议使用 ${requiredPanels} 块 ${maxAreaPanel.spec} 光伏板 (总面积: ${(maxAreaPanel.area * requiredPanels).toFixed(3)} m²)
+                        </td>
+                    </tr>
+                `;
+            } else {
+                // 显示所有满足条件的光伏板
+                tableBody.innerHTML = recommendedPanels.map(panel => `
+                    <tr>
+                        <td>${panel.spec}</td>
+                        <td>${panel.power}W</td>
+                        <td>${panel.area.toFixed(3)}</td>
+                        <td>${panel.cells}</td>
+                        <td>${panel.size}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // 初始化计算
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateSystem();
+            
+            // 添加计算按钮事件
+            document.getElementById('calculateBtn').addEventListener('click', calculateSystem);
+            
+            // 添加输入变化时自动计算
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', calculateSystem);
+            });
+        });
+    </script>
+</body>
+</html>
